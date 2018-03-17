@@ -13,7 +13,7 @@ app.config.update(dict(
     DEFAULT_LINES=['1', '5', '2', '6', '3', '7'],
 ))
 
-app.config.from_envvar('STIBVP_SETTINGS')
+app.config.from_envvar('STIBVP_SETTINGS', silent=True)
 
 app.gtfs = Gtfs(os.path.join(app.root_path, 'gtfs.zip'))
 
