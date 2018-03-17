@@ -1,4 +1,4 @@
-from flask import (Flask, jsonify, g)
+from flask import Flask, jsonify, g, render_template
 from stib_api import StibClient
 from .services import Gtfs, VehicleCoordinates
 import os
@@ -34,10 +34,15 @@ def envprint():
     return jsonify(dict(os.environ))
 
 
-@app.route('/test.json')
-def route_test():
+@app.route('/api/positions')
+def positions():
     api = get_stib_api()
     vc = VehicleCoordinates(api=api, gtfs=app.gtfs)
     gjson = vc.get_coordinates_geojson(app.config['DEFAULT_LINES'])
     # Geojson is a subclass of dict, so we can directly encode it using jsonify
     return jsonify(gjson)
+
+
+@app.route('/')
+def show_map():
+    return render_template('map.html')
