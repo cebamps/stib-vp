@@ -7,6 +7,7 @@
     <script src="{{ url_for('static', filename='vendor/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/leaflet.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/leaflet-providers.js') }}"></script>
+    <script>var lines = {{ lines|tojson|safe }};</script>
   </head>
   <body>
     <div id=map></div>
@@ -27,7 +28,7 @@
       }
 
       function refreshGjson(layer) {
-          return $.getJSON("{{ url_for('positions') }}", gjsonUpdater(layer));
+          return $.getJSON("{{ url_for('positions') }}?lines="+lines, gjsonUpdater(layer));
       }
 
       function repeatRefresh(layer, delta) {
