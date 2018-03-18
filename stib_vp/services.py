@@ -70,6 +70,8 @@ class VehicleCoordinates:
             geometry=geojson.MultiPoint(coords),
             properties={
                 "lineId": vehicle,
-                "marker-color": "#{}".format(self.gtfs.routes[vehicle]['route_color']),
+                "marker-color": "#{}".format(
+                    self.gtfs.routes[vehicle]['route_color']
+                ),
             }
         )
