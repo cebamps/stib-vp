@@ -1,63 +1,68 @@
 <!DOCTYPE html>
-<title>STIB-MIVB live vehicle map</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='vendor/leaflet.css') }}">
-<script src="{{ url_for('static', filename='vendor/jquery.js') }}"></script>
-<script src="{{ url_for('static', filename='vendor/leaflet.js') }}"></script>
-<script src="{{ url_for('static', filename='vendor/leaflet-providers.js') }}"></script>
+<html>
+  <head>
+    <title>STIB-MIVB live vehicle map</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='vendor/leaflet.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='main.css') }}">
+    <script src="{{ url_for('static', filename='vendor/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/leaflet.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/leaflet-providers.js') }}"></script>
+  </head>
+  <body>
+    <div id=map></div>
+    <script>
 
-<div id=map style="width:1000px; height:800px;"></div>
-<script>
+      function gjsonUpdater(layer) {
+          function update(data) {
+              var oldLayers = layer.getLayers();
 
-    function gjsonUpdater(layer) {
-        function update(data) {
-            var oldLayers = layer.getLayers();
+              layer.addData(data);
 
-            layer.addData(data);
+              var n = oldLayers.length;
+              for(var i=0; i<n; i++) {
+                  layer.removeLayer(oldLayers[i]);
+              }
+          }
+          return update;
+      }
 
-            var n = oldLayers.length;
-            for(var i=0; i<n; i++) {
-                layer.removeLayer(oldLayers[i]);
-            }
-        }
-        return update;
-    }
+      function refreshGjson(layer) {
+          return $.getJSON("{{ url_for('positions') }}", gjsonUpdater(layer));
+      }
 
-    function refreshGjson(layer) {
-        return $.getJSON("{{ url_for('positions') }}", gjsonUpdater(layer));
-    }
+      function repeatRefresh(layer, delta) {
+          var timer = 0;
+          function repeat() {
+              var deferred = refreshGjson(layer);
+              deferred.always(function() { timer = setTimeout(repeat, delta); });
+          }
+          function stop() {
+              if (timer) {
+                  clearTimeout(timer);
+              }
+          }
+          repeat();
+          return stop;
+      }
 
-    function repeatRefresh(layer, delta) {
-        var timer = 0;
-        function repeat() {
-            var deferred = refreshGjson(layer);
-            deferred.always(function() { timer = setTimeout(repeat, delta); });
-        }
-        function stop() {
-            if (timer) {
-                clearTimeout(timer);
-            }
-        }
-        repeat();
-        return stop;
-    }
+      var markerStyle = {
+          color: '#000',
+          weight: 2,
+          fillOpacity: 1,
+          radius: 6,
+      }
 
-    var markerStyle = {
-        color: '#000',
-        weight: 2,
-        fillOpacity: 1,
-        radius: 6,
-    }
+      function stylePoint(feature, latlng) {
+          var style = $.extend({}, markerStyle, {"fillColor": feature.properties["marker-color"]});
+          var marker = L.circleMarker(latlng, style);
+          return marker.bindTooltip("Line " + feature.properties["lineId"]);
+      }
 
-    function stylePoint(feature, latlng) {
-        var style = $.extend({}, markerStyle, {"fillColor": feature.properties["marker-color"]});
-        var marker = L.circleMarker(latlng, style);
-        return marker.bindTooltip("Line " + feature.properties["lineId"]);
-    }
+      var map = L.map("map").setView([50.845, 4.360], 12);
+      L.tileLayer.provider("OpenStreetMap.Mapnik").addTo(map);
+      var gjsonLayer = L.geoJson(undefined, {pointToLayer: stylePoint}).addTo(map);
 
-    var map = L.map("map").setView([50.845, 4.360], 12);
-    L.tileLayer.provider("OpenStreetMap.Mapnik").addTo(map);
-    var gjsonLayer = L.geoJson(undefined, {pointToLayer: stylePoint}).addTo(map);
-
-    stopRefresh = repeatRefresh(gjsonLayer, 20000);
-
-</script>
+      stopRefresh = repeatRefresh(gjsonLayer, 20000);
+    </script>
+  </body>
+</html>
