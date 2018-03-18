@@ -26,6 +26,21 @@
         return $.getJSON("{{ url_for('positions') }}", gjsonUpdater(layer));
     }
 
+    function repeatRefresh(layer, delta) {
+        var timer = 0;
+        function repeat() {
+            var deferred = refreshGjson(layer);
+            deferred.always(function() { timer = setTimeout(repeat, delta); });
+        }
+        function stop() {
+            if (timer) {
+                clearTimeout(timer);
+            }
+        }
+        repeat();
+        return stop;
+    }
+
     var markerStyle = {
         color: '#000',
         weight: 2,
@@ -40,10 +55,9 @@
     }
 
     var map = L.map("map").setView([50.845, 4.360], 12);
-
     L.tileLayer.provider("OpenStreetMap.Mapnik").addTo(map);
-
     var gjsonLayer = L.geoJson(undefined, {pointToLayer: stylePoint}).addTo(map);
-    refreshGjson(gjsonLayer);
+
+    stopRefresh = repeatRefresh(gjsonLayer, 20000);
 
 </script>
