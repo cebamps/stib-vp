@@ -53,10 +53,9 @@ class VehicleCoordinates:
         Features with a "lineId" property for the route name.
         """
         vehicle_coords = self.get_coordinates(vehicles)
-        features = []
-        for vehicle, coords in vehicle_coords.items():
-            features.append(geojson.Feature(
-                geometry=geojson.MultiPoint(coords),
-                properties={"lineId": vehicle},
-            ))
+        features = [
+            geojson.Feature(geometry=geojson.MultiPoint(coords),
+                            properties={"lineId": vehicle})
+            for vehicle, coords in vehicle_coords.items()
+        ]
         return geojson.FeatureCollection(features)
