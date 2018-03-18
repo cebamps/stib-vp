@@ -18,7 +18,13 @@ class Gtfs:
 
     def _get_routes(self):
         with self._file_iterator('routes.txt') as gtfs_routes:
-            return [r['route_short_name'] for r in gtfs_routes]
+            return {
+                r['route_short_name']: {
+                    key: r[key]
+                    for key in ('route_long_name', 'route_color')
+                }
+                for r in gtfs_routes
+            }
 
     @contextmanager
     def _file_iterator(self, name):
@@ -54,8 +60,16 @@ class VehicleCoordinates:
         """
         vehicle_coords = self.get_coordinates(vehicles)
         features = [
-            geojson.Feature(geometry=geojson.MultiPoint(coords),
-                            properties={"lineId": vehicle})
+            self._make_multipoint(vehicle, coords)
             for vehicle, coords in vehicle_coords.items()
         ]
         return geojson.FeatureCollection(features)
+
+    def _make_multipoint(self, vehicle, coords):
+        return geojson.Feature(
+            geometry=geojson.MultiPoint(coords),
+            properties={
+                "lineId": vehicle,
+                "marker-color": "#{}".format(self.gtfs.routes[vehicle]['route_color']),
+            }
+        )

@@ -26,11 +26,23 @@
 		return $.getJSON("{{ url_for('positions') }}", gjsonUpdater(layer));
 	}
 
+	var markerStyle = {
+		color: '#000',
+		weight: 2,
+		fillOpacity: 1,
+		radius: 6,
+	}
+
+	function stylePoint(feature, latlng) {
+		var style = $.extend({}, markerStyle, {"fillColor": feature.properties["marker-color"]});
+		return L.circleMarker(latlng, style);
+	}
+
 	var map = L.map("map").setView([50.845, 4.360], 12);
 
 	L.tileLayer.provider("OpenStreetMap.Mapnik").addTo(map);
 
-	var gjsonLayer = L.geoJson().addTo(map);
+	var gjsonLayer = L.geoJson(undefined, {pointToLayer: stylePoint}).addTo(map);
 	refreshGjson(gjsonLayer);
 
 </script>
