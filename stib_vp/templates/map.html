@@ -70,6 +70,27 @@
       var gjsonLayer = L.geoJson(undefined, {pointToLayer: stylePoint}).addTo(map);
 
       stopRefresh = repeatRefresh(gjsonLayer, 20000);
+
+
+      // Handle the route selector
+      function routeClicked() {
+          var name = this.id.substring(2);
+          if (!this.checked) {
+              var i = routes.indexOf(name);
+              routes.splice(i, 1);
+          } else {
+              routes.push(name);
+          }
+      }
+
+      $('#routes input[type="checkbox"][id^="rt"]').each(function() {
+          var name = this.id.substring(2);
+          if (routes.indexOf(name) >= 0) {
+              this.checked = true;
+          }
+          $(this).change(routeClicked);
+      });
+
     </script>
   </body>
 </html>
