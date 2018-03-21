@@ -21,7 +21,8 @@ class Gtfs:
             return {
                 r['route_short_name']: {
                     key: r[key]
-                    for key in ('route_long_name', 'route_color')
+                    for key in ('route_long_name', 'route_color',
+                                'route_text_color')
                 }
                 for r in gtfs_routes
             }

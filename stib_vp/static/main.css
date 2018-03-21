@@ -2,7 +2,69 @@ body {
   margin: 0;
 }
 
-html, body, #map {
+html, body {
   height: 100%;
   width: 100%;
 }
+
+#map {
+  height: 100%;
+  width: auto;
+  overflow: hidden;
+}
+
+#routes {
+  height: 100%;
+  width: 250px;
+  float: right;
+  overflow: auto;
+  text-align: center;
+  line-height: 60px;
+}
+
+
+label.route {
+	display: inline-block;
+	line-height: normal;
+}
+
+input[id^="rt"] {
+	display: none;
+}
+
+label.route:after {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	border-radius: 6px;
+	text-align: center;
+	opacity: 0.6;
+	font-family: Helvetica;
+	font-size: 20px;
+	font-weight: bold;
+	background-color: gray;
+}
+
+input:checked + label.route:after {
+	opacity: 1;
+}
+
+input:disabled + label.route:after {
+	opacity: 0.2;
+}
+
+
+/* frame around selected boxes */
+
+label.route {
+	padding: 4px;
+	border: 3px solid transparent;
+}
+
+input:checked + label.route {
+	border-color: black;
+	border-radius: 6px;
+}
+
+<input type="checkbox" id="rt42"><label class="route" for="rt42"></label>

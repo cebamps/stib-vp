@@ -4,12 +4,18 @@
     <title>STIB-MIVB live vehicle map</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='vendor/leaflet.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='main.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('colors_css') }}">
     <script src="{{ url_for('static', filename='vendor/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/leaflet.js') }}"></script>
     <script src="{{ url_for('static', filename='vendor/leaflet-providers.js') }}"></script>
     <script>var lines = {{ shown_routes|tojson|safe }};</script>
   </head>
   <body>
+    <div id=routes>
+    {% for name in routes.keys() %}
+      <input type="checkbox" id="rt{{ name }}"><label class="route" for="rt{{ name }}"></label>
+    {% endfor %}
+    </div>
     <div id=map></div>
     <script>
 

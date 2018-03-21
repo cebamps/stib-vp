@@ -1,0 +1,7 @@
+{% for name, props in routes.items() %}
+label.route[for="rt{{ name }}"]:after {
+	content: "{{ name }}";
+	color: #{{ props.route_text_color }};
+	background-color: #{{ props.route_color }};
+}
+{% endfor %}

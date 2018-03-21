@@ -1,5 +1,6 @@
 from flask import (
-    Flask, request, redirect, jsonify, g, render_template, url_for
+    Flask, request, redirect, jsonify, g, render_template, url_for,
+    make_response
 )
 from stib_api import StibClient
 from .services import Gtfs, VehicleCoordinates
@@ -40,6 +41,15 @@ def positions():
     return jsonify(gjson)
 
 
+@app.route('/colors.css')
+def colors_css():
+    resp = make_response(render_template('colors.css', routes=app.gtfs.routes))
+    # Attribute of werkzeug.wrappers.Response inherited from
+    # werkzeug.wrappers.CommonResponseDescriptorsMixin
+    resp.mimetype = 'text/css'
+    return resp
+
+
 @app.route('/')
 def show_map():
     shown_routes = request.args.get('lines')
@@ -47,4 +57,8 @@ def show_map():
         shown_routes = ','.join(app.config['DEFAULT_ROUTES'])
         return redirect(url_for('show_map', lines=shown_routes))
 
-    return render_template('map.html', shown_routes=shown_routes)
+    return render_template(
+        'map.html',
+        shown_routes=shown_routes,
+        routes=app.gtfs.routes,
+    )
