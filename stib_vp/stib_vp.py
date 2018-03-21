@@ -12,7 +12,7 @@ app.config.update(dict(
     STIB_BASE=None,
     STIB_CLIENT_ID='xxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     STIB_CLIENT_SECRET='xxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    DEFAULT_LINES=['1', '5', '2', '6', '3', '7'],
+    DEFAULT_ROUTES=['1', '5', '2', '6', '3', '7'],
 ))
 
 app.config.from_envvar('STIBVP_SETTINGS', silent=True)
@@ -42,9 +42,9 @@ def positions():
 
 @app.route('/')
 def show_map():
-    lines = request.args.get('lines')
-    if not lines:
-        lines = ','.join(app.config['DEFAULT_LINES'])
-        return redirect(url_for('show_map', lines=lines))
+    shown_routes = request.args.get('lines')
+    if not shown_routes:
+        shown_routes = ','.join(app.config['DEFAULT_ROUTES'])
+        return redirect(url_for('show_map', lines=shown_routes))
 
-    return render_template('map.html', lines=lines)
+    return render_template('map.html', shown_routes=shown_routes)
