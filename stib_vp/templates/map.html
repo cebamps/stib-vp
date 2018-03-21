@@ -34,7 +34,7 @@
       }
 
       function refreshGjson(layer) {
-          return $.getJSON("{{ url_for('positions') }}?lines="+lines, gjsonUpdater(layer));
+          return $.getJSON("{{ url_for('positions') }}?lines="+lines.join(','), gjsonUpdater(layer));
       }
 
       function repeatRefresh(layer, delta) {

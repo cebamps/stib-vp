@@ -57,6 +57,7 @@ def show_map():
         shown_routes = ','.join(app.config['DEFAULT_ROUTES'])
         return redirect(url_for('show_map', lines=shown_routes))
 
+    shown_routes = shown_routes.split(',')
     return render_template(
         'map.html',
         shown_routes=shown_routes,
