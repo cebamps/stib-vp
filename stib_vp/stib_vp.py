@@ -30,12 +30,6 @@ def get_stib_api():
     return g.stib_api
 
 
-@app.route('/env')
-def envprint():
-    import os
-    return jsonify(dict(os.environ))
-
-
 @app.route('/api/positions')
 def positions():
     lines = request.args.get('lines', '').split(',')
