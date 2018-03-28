@@ -4,19 +4,13 @@ from flask import (
 )
 from stib_api import StibClient
 from .services import Gtfs, VehicleCoordinates
+from .settings import Configuration
 import os
 
 
 app = Flask(__name__)
 
-app.config.update(dict(
-    STIB_BASE=None,
-    STIB_CLIENT_ID='xxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    STIB_CLIENT_SECRET='xxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    DEFAULT_ROUTES=['1', '5', '2', '6', '3', '7'],
-))
-
-app.config.from_envvar('STIBVP_SETTINGS', silent=True)
+app.config.from_object(Configuration)
 
 app.gtfs = Gtfs(os.path.join(app.root_path, 'gtfs.zip'))
 
